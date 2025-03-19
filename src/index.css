@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html, body {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Typography alignment fixes */
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-semibold;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl mb-4;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl mb-3;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl mb-2;
+  }
+
+  /* Card alignments */
+  .card-grid {
+    @apply grid gap-6;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  /* Container padding */
+  .content-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Section spacing */
+  .section-spacing {
+    @apply py-12 md:py-16;
+  }
+}
+
+/* Component specific styles */
+.brand-card {
+  @apply relative overflow-hidden rounded-xl p-6 transition-all duration-300;
+}
+
+.brand-card-expanded {
+  @apply scale-102 shadow-xl;
+}
+
+.brand-content {
+  @apply space-y-4 mt-6;
+}
+
+.brand-subsidiaries {
+  @apply mt-6 space-y-4;
+}
+
+.brand-products {
+  @apply mt-2 space-y-1 pl-6;
+}
+
+/* Button alignments */
+.button-container {
+  @apply flex items-center justify-center gap-4 mt-6;
+}
+
+/* Input field alignments */
+.input-container {
+  @apply flex flex-col space-y-2;
+}
+
+.input-field {
+  @apply w-full rounded-md border border-input px-3 py-2;
+}
+
+/* Card layouts */
+.card-layout {
+  @apply p-6 rounded-lg border bg-card text-card-foreground shadow-sm;
+}
+
+.card-header {
+  @apply flex flex-col space-y-1.5 pb-4;
+}
+
+.card-content {
+  @apply space-y-4;
+}
+
+/* Animation utilities */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.scale-102 {
+  transform: scale(1.02);
+}
+
+/* Glass morphism effect */
+.glass-card {
+  @apply backdrop-blur-sm bg-white/80 dark:bg-gray-900/80;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+/* Gradient borders */
+.gradient-border {
+  @apply relative;
+  &::before {
+    content: '';
+    @apply absolute inset-0 rounded-xl p-0.5;
+    background: linear-gradient(to right, theme('colors.blue.500'), theme('colors.purple.600'));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}
+
+/* Tree diagram specific styles */
+.company-tree-node {
+  @apply relative transition-all duration-300;
+}
+
+.company-tree-node-active {
+  @apply scale-102 shadow-lg;
+}
+
+.company-tree-connector {
+  @apply absolute left-6 top-full h-8 w-px bg-gradient-to-b from-blue-500 to-purple-600;
+}
+
+.company-tree-children {
+  @apply pl-8 ml-5 border-l-2 border-dashed border-blue-300 dark:border-blue-700;
+}
+
+/* Organization chart styles */
+.org-chart-container {
+  @apply relative mx-auto max-w-5xl overflow-x-auto pb-10;
+}
+
+.org-chart-level {
+  @apply flex justify-center;
+}
+
+.org-chart-node {
+  @apply relative flex flex-col items-center m-2;
+}
+
+.org-chart-node-content {
+  @apply p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm min-w-[180px] text-center;
+}
+
+.org-chart-connector {
+  @apply w-px h-6 bg-gray-300 dark:bg-gray-700 mx-auto my-1;
+}
+
+.org-chart-children {
+  @apply flex justify-center flex-wrap;
+}
+
+/* Enhanced form controls */
+.form-control-enhanced {
+  @apply relative focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent rounded-md transition-all duration-200;
+}
+
+.form-control-enhanced input,
+.form-control-enhanced select,
+.form-control-enhanced textarea {
+  @apply bg-transparent focus:outline-none w-full;
+}
+
+.form-control-enhanced-label {
+  @apply absolute left-3 top-2 text-xs text-gray-500 transition-all duration-200;
+}
+
+.form-control-enhanced-active .form-control-enhanced-label {
+  @apply -top-6 text-blue-600;
+}

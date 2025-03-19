@@ -1,0 +1,352 @@
+#root {
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  text-align: left;
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 2rem;
+  }
+}
+
+/* Fixed padding to prevent content overlap with fixed navbar */
+.page-content {
+  padding-top: 0.5rem;
+  min-height: calc(100vh - 4rem);
+}
+
+main {
+  min-height: calc(100vh - 4rem);
+  padding-top: 0; 
+}
+
+.section {
+  margin-bottom: 2rem;
+  overflow: hidden; /* Prevent text overflow */
+}
+
+@media (min-width: 768px) {
+  .section {
+    margin-bottom: 4rem;
+  }
+}
+
+.card {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  background-color: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Prevent text overflow */
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 1rem;
+  }
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-responsive {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Fix for text overflow */
+h1, h2, h3, h4, h5, h6, p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
+/* Consistent text sizing */
+h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Product card text size fix */
+.product-card-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.product-card-description {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Fix for text trimming */
+.text-ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.text-wrap {
+  white-space: normal;
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+}
+
+/* Make sure buttons are consistently sized */
+.btn, button {
+  min-height: 2.5rem;
+}
+
+/* New brand card styles */
+.brand-card-compact {
+  position: relative;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  overflow: visible;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background-color: white;
+}
+
+.brand-card-compact:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.brand-card-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #9b87f5, #6366f1);
+  color: white;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.brand-name {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  line-height: 1.2;
+}
+
+.brand-description {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Brand subsidiary styling */
+.brand-subsidiary {
+  padding-left: 0.75rem;
+  border-left: 2px solid #9b87f5;
+  margin-left: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.subsidiary-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.subsidiary-description {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Animation for subsidiary expansion */
+.subsidiary-expand {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from { 
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Brand category grid */
+.brand-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Fix for navbar overlap */
+.navigation-container {
+  height: 4rem;
+}
+
+/* Brand subsidiaries tree styling */
+.brand-subsidiaries-tree {
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border-left: 2px dashed #e2e8f0;
+}
+
+.brand-subsidiary-item {
+  margin-bottom: 0.75rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.brand-subsidiary-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 10px;
+  height: 1px;
+  background-color: #cbd5e1;
+}
+
+/* Product card fixes */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.product-card-image {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+/* Fix subsidiary display styling */
+.subsidiary-container {
+  border-top: 1px solid var(--border);
+  background-color: var(--accent);
+  padding: 0.75rem;
+  margin-top: 0.25rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.subsidiary-list {
+  padding-left: 0.5rem;
+}
+
+.subsidiary-item {
+  padding: 0.5rem;
+  border-left: 2px solid rgba(147, 51, 234, 0.3);
+  margin-bottom: 0.5rem;
+}
+
+.subsidiary-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Fix for login forms */
+.auth-form {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Registration form styles */
+.registration-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-section {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: white;
+}
+
+@keyframes scan {
+  0% {
+    top: 0;
+  }
+  50% {
+    top: 100%;
+  }
+  100% {
+    top: 0;
+  }
+}
+
+.animate-scan {
+  animation: scan 1.5s linear infinite;
+}
