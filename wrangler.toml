@@ -3,6 +3,4 @@ type = "javascript"
 
 account_id = "ce91e506d1c2aee6697d276411b3ccc1"
 workers_dev = true
-route = ""
-zone_id = ""
 compatibility_date = "2025-03-20"
