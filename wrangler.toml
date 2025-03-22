@@ -1,0 +1,8 @@
+name = "brandthropic"
+type = "javascript"
+
+account_id = "your-cloudflare-account-id"
+workers_dev = true
+route = ""
+zone_id = ""
+compatibility_date = "2025-03-20"
