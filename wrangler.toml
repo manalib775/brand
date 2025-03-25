@@ -2,7 +2,7 @@ name = "brandthropic"
 type = "javascript"
 
 # Ensure this line exists to specify the build output directory
-pages_build_output_dir = "./dist/assets"  # Change to your actual build folder
+pages_build_output_dir = "./dist"  # Change to your actual build folder
 
 compatibility_date = "2025-03-20"
 node_version = "18.18.0"
