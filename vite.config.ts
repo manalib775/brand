@@ -23,10 +23,13 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       // Ensure environment variables are available in frontend code
-      "process.env": {
-        VITE_CLERK_PUBLISHABLE_KEY: env.VITE_CLERK_PUBLISHABLE_KEY,
-        CLERK_SECRET_KEY: env.CLERK_SECRET_KEY,
-      },
+      //"process.env": {
+       // VITE_CLERK_PUBLISHABLE_KEY: env.VITE_CLERK_PUBLISHABLE_KEY,
+       // CLERK_SECRET_KEY: env.CLERK_SECRET_KEY,
+     // },
+      "import.meta.env.VITE_CLERK_PUBLISHABLE_KEY": JSON.stringify(env.VITE_CLERK_PUBLISHABLE_KEY),
+      "import.meta.env.CLERK_SECRET_KEY": JSON.stringify(env.CLERK_SECRET_KEY),
+
     },
   };
 });
