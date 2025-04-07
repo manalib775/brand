@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,11 +9,54 @@ import { useToast } from "@/components/ui/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, AlignLeft, Globe, Mail, Phone, AlertCircle, Lock } from "lucide-react";
+import { Building2, AlignLeft, Globe, Mail, Phone, AlertCircle, Lock, Loader2, Info, CheckCircle, XCircle } from "lucide-react";
+import { registerBrand, BrandRegistrationData, testBrandsTableConnection } from "@/services/brandService";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function BrandRegistration() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<{ checked: boolean; connected: boolean; error?: string }>({
+    checked: false,
+    connected: false
+  });
+
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        const result = await testBrandsTableConnection();
+        setConnectionStatus({ 
+          checked: true, 
+          connected: result.success,
+          error: result.error
+        });
+        
+        if (!result.success) {
+          console.error('Supabase connection error:', result.error);
+          toast({
+            title: "Database connection issue",
+            description: result.error || "There's a problem connecting to our database. Your registration may not be saved.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Database connection successful",
+            description: "Successfully connected to Supabase brands table.",
+          });
+        }
+      } catch (error) {
+        console.error('Error testing connection:', error);
+        setConnectionStatus({ 
+          checked: true, 
+          connected: false,
+          error: error instanceof Error ? error.message : 'Unknown connection error'
+        });
+      }
+    };
+    
+    testConnection();
+  }, [toast]);
 
   const [formData, setFormData] = useState({
     brandName: "",
@@ -36,11 +78,15 @@ export default function BrandRegistration() {
   
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [registrationError, setRegistrationError] = useState<{message: string; code?: string; rlsHelp?: string} | null>(null);
   
   const handleInputChange = (name: string, value: string | boolean) => {
     setFormData({ ...formData, [name]: value });
     
-    // Validate email domain against website domain
+    if (registrationError) {
+      setRegistrationError(null);
+    }
+    
     if (name === "email") {
       const emailValue = value as string;
       const emailDomain = emailValue.split('@')[1];
@@ -53,7 +99,6 @@ export default function BrandRegistration() {
       }
     }
 
-    // Validate password match
     if (name === "password" || name === "confirmPassword") {
       if (name === "password" && formData.confirmPassword && value !== formData.confirmPassword) {
         setPasswordError("Passwords do not match");
@@ -65,7 +110,7 @@ export default function BrandRegistration() {
     }
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.termsAccepted) {
@@ -95,20 +140,151 @@ export default function BrandRegistration() {
       return;
     }
     
-    // Submit registration
+    setIsSubmitting(true);
+    setRegistrationError(null);
+    
     toast({
-      title: "Registration submitted",
-      description: "Your brand registration has been submitted for review. We'll contact you soon.",
+      title: "Processing registration",
+      description: "Please wait while we process your registration...",
     });
     
-    // Redirect to homepage
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
+    const brandData: BrandRegistrationData = {
+      brandName: formData.brandName,
+      email: formData.email,
+      domain: formData.domain || formData.website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0],
+      website: formData.website,
+      phone: formData.phone,
+      industry: formData.industry,
+      customIndustry: formData.customIndustry,
+      description: formData.description,
+      address: formData.address,
+      contactPerson: formData.contactPerson,
+      isParentCompany: formData.isParentCompany,
+      parentCompany: formData.parentCompany,
+    };
+    
+    try {
+      const result = await registerBrand(brandData, formData.password);
+      
+      if (result.success) {
+        toast({
+          title: "Registration successful",
+          description: "Your brand has been registered successfully. Welcome aboard!",
+        });
+        
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      } else {
+        setRegistrationError({
+          message: result.error || "An unknown error occurred",
+          code: result.errorCode,
+          rlsHelp: result.rlsHelp
+        });
+        
+        toast({
+          title: "Registration failed",
+          description: result.error || "An unknown error occurred. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      setRegistrationError({
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
+      toast({
+        title: "Registration failed",
+        description: "An unexpected error occurred. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  const getErrorGuide = () => {
+    if (!registrationError) return null;
+    
+    if (registrationError.code === 'user_already_exists') {
+      return (
+        <Alert className="bg-amber-50 mt-4">
+          <AlertCircle className="h-5 w-5 text-amber-600" />
+          <AlertTitle className="text-amber-800">Email already in use</AlertTitle>
+          <AlertDescription className="text-amber-700">
+            <p>This email address is already registered in our system. You can:</p>
+            <ul className="list-disc pl-5 mt-2">
+              <li>Try signing in with this email instead</li>
+              <li>Use a different email address for registration</li>
+              <li>Contact support if you don't remember registering</li>
+            </ul>
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    
+    if (registrationError.code === 'rls_violation') {
+      return (
+        <Alert className="bg-amber-50 mt-4">
+          <AlertCircle className="h-5 w-5 text-amber-600" />
+          <AlertTitle className="text-amber-800">Database Permission Issue</AlertTitle>
+          <AlertDescription className="text-amber-700">
+            <p>Supabase Row Level Security (RLS) is preventing brand registration.</p>
+            <p className="mt-2">This is a technical issue that needs to be fixed in the Supabase dashboard.</p>
+            
+            {registrationError.rlsHelp && (
+              <div className="mt-4 p-3 bg-amber-100 rounded-md">
+                <h4 className="font-medium mb-2">How to fix:</h4>
+                <pre className="whitespace-pre-wrap text-xs overflow-auto max-h-60 bg-amber-50 p-2 rounded">
+                  {registrationError.rlsHelp}
+                </pre>
+              </div>
+            )}
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    
+    return (
+      <Alert className="bg-red-50 mt-4">
+        <AlertCircle className="h-5 w-5 text-red-600" />
+        <AlertTitle className="text-red-800">Registration Error</AlertTitle>
+        <AlertDescription className="text-red-700">
+          {registrationError.message}
+        </AlertDescription>
+      </Alert>
+    );
   };
   
   return (
     <div className="container max-w-4xl py-10">
+      <div className="mb-6">
+        {connectionStatus.checked && (
+          <Alert className={connectionStatus.connected ? "bg-green-50" : "bg-red-50"}>
+            <div className="flex items-center">
+              {connectionStatus.connected ? (
+                <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+              ) : (
+                <XCircle className="h-5 w-5 text-red-600 mr-2" />
+              )}
+              <div>
+                <AlertTitle className={connectionStatus.connected ? "text-green-800" : "text-red-800"}>
+                  Database Connection: {connectionStatus.connected ? "Successful" : "Failed"}
+                </AlertTitle>
+                <AlertDescription className={connectionStatus.connected ? "text-green-700" : "text-red-700"}>
+                  {connectionStatus.connected 
+                    ? "Successfully connected to the brands table in Supabase." 
+                    : `Unable to connect to the brands table: ${connectionStatus.error || "Unknown error"}`}
+                </AlertDescription>
+              </div>
+            </div>
+          </Alert>
+        )}
+        
+        {registrationError && getErrorGuide()}
+      </div>
+
       <div className="mb-10 text-center">
         <h1 className="text-3xl font-bold mb-2">Brand Registration</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -238,6 +414,7 @@ export default function BrandRegistration() {
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     required
+                    className={registrationError?.code === 'user_already_exists' ? 'border-amber-500 focus-visible:ring-amber-500' : ''}
                   />
                 </div>
                 {emailError && (
@@ -400,7 +577,9 @@ export default function BrandRegistration() {
           <Button variant="outline" type="button" onClick={() => navigate("/")}>
             Cancel
           </Button>
-          <Button type="submit">Submit Registration</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : "Submit Registration"}
+          </Button>
         </div>
       </form>
     </div>
